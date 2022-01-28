@@ -34,9 +34,9 @@ public final class QRCapturerViewController: UIViewController {
         }
     }
     
-    let shouldDismissWhenFound: Bool
+    public let shouldDismissWhenFound: Bool
     
-    lazy var previewView: UIImageView = { [unowned self] in
+    public lazy var previewView: UIImageView = { [unowned self] in
         let view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 13.0, *) {
@@ -67,6 +67,7 @@ public final class QRCapturerViewController: UIViewController {
     private var qROutput: String?
     
     public weak var delegate: QRDataSource?
+    public weak var eventLoger: QREventLogger?
 
     // MARK: UI Components
     
@@ -126,11 +127,13 @@ public final class QRCapturerViewController: UIViewController {
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         self.captureSession?.stopRunning()
+        eventLoger?.qrEventOccurred(event: "Stopped capture session.", level: .info)
     }
 
     public func resume() {
         captureSession?.startRunning()
         qrCodeFrameView?.frame = .zero
+        eventLoger?.qrEventOccurred(event: "Resuming capture session.", level: .info)
     }
     
     private func setup() {
@@ -179,6 +182,7 @@ public final class QRCapturerViewController: UIViewController {
         super.viewWillAppear(animated)
         // Start video capture.
         captureSession?.startRunning()
+        eventLoger?.qrEventOccurred(event: "Starting capture session.", level: .info)
     }
 }
 
@@ -189,6 +193,7 @@ extension QRCapturerViewController: AVCaptureMetadataOutputObjectsDelegate {
         if metadataObjects.isEmpty {
             qrCodeFrameView?.frame = .zero
             // messageLabel.text = "No QR code is detected"
+            eventLoger?.qrEventOccurred(event: "No QR detected!", level: .warning)
             return
         }
             
@@ -207,6 +212,9 @@ extension QRCapturerViewController: AVCaptureMetadataOutputObjectsDelegate {
             if metadataObj.stringValue != nil {
                 self.qROutput = metadataObj.stringValue
                 self.captureSession?.stopRunning()
+                
+                eventLoger?.qrEventOccurred(event: "A QR has been decoded! It's \(metadataObj.stringValue?.count ?? 0) characters long.", level: .info)
+                
                 if shouldDismissWhenFound {
                     self.close()
                 } else {
