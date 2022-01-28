@@ -55,7 +55,7 @@ public final class QRCapturerViewController: UIViewController {
         return view
     }()
     
-    init(shouldDismiss: Bool) {
+    public init(shouldDismiss: Bool) {
         self.shouldDismissWhenFound = shouldDismiss
         super.init(nibName: nil, bundle: nil)
     }
@@ -66,7 +66,7 @@ public final class QRCapturerViewController: UIViewController {
     
     private var qROutput: String?
     
-    weak var delegate: QRDataSource?
+    public weak var delegate: QRDataSource?
 
     // MARK: UI Components
     
