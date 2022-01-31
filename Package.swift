@@ -21,7 +21,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "IDSQRKit",
-            dependencies: []),
+            dependencies: ["ALConstraintKit"]),
         .testTarget(
             name: "IDSQRKitTests",
             dependencies: ["IDSQRKit"]),
