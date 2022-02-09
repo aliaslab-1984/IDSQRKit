@@ -117,16 +117,18 @@ public final class QRCapturerViewController: UIViewController {
             if #available(iOS 13.0, *) {
                 previewView.image = UIImage(systemName: "video.slash.fill")
             }
-            let alert = UIAlertController(title: "Missing Camera permission", message: "In order to scan the QR Code, you need to provide camera access.", preferredStyle: .alert)
-            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
-            let permissionAction = UIAlertAction(title: "Give Access", style: .default) { [weak self] _ in
+            let alert = UIAlertController(title: "alert_title".localized, message: "alert_message".localized, preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "cancel_alert".localized, style: .cancel)
+            let permissionAction = UIAlertAction(title: "give_access_action".localized, style: .default) { [weak self] _ in
                 QRCameraAccess.requestPermissionIfNeeded { granted in
-                    if granted {
-                        self?.setup()
-                        self?.setupGreenBox()
-                        self?.resume()
-                    } else {
-                        self?.dismiss(animated: true)
+                    DispatchQueue.main.async {
+                        if granted {
+                            self?.setup()
+                            self?.setupGreenBox()
+                            self?.resume()
+                        } else {
+                            self?.dismiss(animated: true)
+                        }
                     }
                 }
             }

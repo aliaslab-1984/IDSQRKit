@@ -1,0 +1,6 @@
+
+
+"alert_title" = "Accesso alla fotocamera";
+"alert_message" ="Per poter scansionare il codice QR è necessario fornire l'accesso alla fotocamera.";
+"give_access_action" = "Dai Accesso";
+"cancel_alert" = "Annulla";

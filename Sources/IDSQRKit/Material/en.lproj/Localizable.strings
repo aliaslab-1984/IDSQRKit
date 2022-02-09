@@ -1,0 +1,6 @@
+
+
+"alert_title" = "Missing Camera permission";
+"alert_message" ="In order to scan the QR Code, you need to provide camera access.";
+"give_access_action" = "Give Access";
+"cancel_alert" = "Cancel";
