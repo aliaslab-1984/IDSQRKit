@@ -5,5 +5,5 @@
 "give_access_action" = "Dai Accesso";
 "cancel_alert" = "Annulla";
 "setting_alert_title" = "Accesso alla fotocamera negato";
-"setting_alert_message" = "PEr dare accesso alla fotocamera è necessario abilitarlo dalle impostazioni del dispositivo.";
+"setting_alert_message" = "Per dare accesso alla fotocamera è necessario abilitarlo dalle impostazioni del dispositivo.";
 "setting_alert_go" = "Vai alle impostazioni";

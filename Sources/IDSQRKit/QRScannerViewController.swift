@@ -122,7 +122,8 @@ public final class QRCapturerViewController: UIViewController {
             let alert = Alerts.permissionAlert { [weak self] in
                 self?.setup()
                 self?.setupGreenBox()
-                self?.previewView.layoutSubviews()
+                self?.previewView.image = nil
+                self?.view.layoutSubviews()
                 self?.resume()
             } onDenied: { [weak self] in
                 self?.dismiss(animated: true)
