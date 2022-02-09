@@ -110,8 +110,30 @@ public final class QRCapturerViewController: UIViewController {
             }
         }
         
-        setup()
-        setupGreenBox()
+        if QRCameraAccess.hasPermission() {
+            setup()
+            setupGreenBox()
+        } else {
+            if #available(iOS 13.0, *) {
+                previewView.image = UIImage(systemName: "video.slash.fill")
+            }
+            let alert = UIAlertController(title: "Missing Camera permission", message: "In order to scan the QR Code, you need to provide camera access.", preferredStyle: .alert)
+            let cancelAction = UIAlertAction(title: "Cancel", style: .cancel)
+            let permissionAction = UIAlertAction(title: "Give Access", style: .default) { [weak self] _ in
+                QRCameraAccess.requestPermissionIfNeeded { granted in
+                    if granted {
+                        self?.setup()
+                        self?.setupGreenBox()
+                        self?.resume()
+                    } else {
+                        self?.dismiss(animated: true)
+                    }
+                }
+            }
+            alert.addAction(cancelAction)
+            alert.addAction(permissionAction)
+            self.present(alert, animated: true)
+        }
     }
     
     @objc private func close() {
