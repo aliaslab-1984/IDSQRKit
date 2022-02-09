@@ -123,6 +123,7 @@ public final class QRCapturerViewController: UIViewController {
                 self?.setup()
                 self?.setupGreenBox()
                 self?.previewView.image = nil
+                self?.previewView.backgroundColor = nil
                 self?.view.layoutSubviews()
                 self?.resume()
             } onDenied: { [weak self] in
