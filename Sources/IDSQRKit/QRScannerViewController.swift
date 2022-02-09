@@ -132,7 +132,9 @@ public final class QRCapturerViewController: UIViewController {
             }
             alert.addAction(cancelAction)
             alert.addAction(permissionAction)
-            self.present(alert, animated: true)
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
+                self?.present(alert, animated: true)
+            }
         }
     }
     
