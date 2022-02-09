@@ -130,16 +130,20 @@ public final class QRCapturerViewController: UIViewController {
                 self?.dismiss(animated: true)
             }
             
+            alert.view.tintColor = self.view.tintColor
+            
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                 self?.present(alert, animated: true)
             }
         case .denied, .restricted:
             let settingsAlert = Alerts.settingsAlert()
+            settingsAlert.view.tintColor = self.view.tintColor
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                 self?.present(settingsAlert, animated: true)
             }
         @unknown default:
             let settingsAlert = Alerts.settingsAlert()
+            settingsAlert.view.tintColor = self.view.tintColor
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                 self?.present(settingsAlert, animated: true)
             }
