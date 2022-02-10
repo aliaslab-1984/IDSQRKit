@@ -23,17 +23,6 @@ public final class QRCapturerViewController: UIViewController {
         return gesture
     }()
     
-    @objc private func toggleSession() {
-        guard let session = captureSession else {
-            return
-        }
-        if session.isRunning {
-            session.stopRunning()
-        } else {
-            session.startRunning()
-        }
-    }
-    
     public let shouldDismissWhenFound: Bool
     
     public lazy var previewView: UIImageView = { [unowned self] in
@@ -136,27 +125,21 @@ public final class QRCapturerViewController: UIViewController {
                 self?.present(alert, animated: true)
             }
         case .denied, .restricted:
-            let settingsAlert = Alerts.settingsAlert()
+            let settingsAlert = Alerts.settingsAlert { [weak self] in
+                self?.dismiss(animated: true)
+            }
             settingsAlert.view.tintColor = self.view.tintColor
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                 self?.present(settingsAlert, animated: true)
             }
         @unknown default:
-            let settingsAlert = Alerts.settingsAlert()
+            let settingsAlert = Alerts.settingsAlert { [weak self] in
+                self?.dismiss(animated: true)
+            }
             settingsAlert.view.tintColor = self.view.tintColor
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) { [weak self] in
                 self?.present(settingsAlert, animated: true)
             }
-        }
-    }
-    
-    @objc private func close() {
-        // It's better to notify the delegate once the window gets closed instead of the moment when the qr gets parsed.
-        self.dismiss(animated: true) { [weak self] in
-            guard let qrString = self?.qROutput else {
-                return
-            }
-            self?.delegate?.didGet(qrData: qrString)
         }
     }
     
@@ -170,6 +153,27 @@ public final class QRCapturerViewController: UIViewController {
         captureSession?.startRunning()
         qrCodeFrameView?.frame = .zero
         eventLoger?.qrEventOccurred(event: "Resuming capture session.", level: .info)
+    }
+    
+    @objc private func close() {
+        // It's better to notify the delegate once the window gets closed instead of the moment when the qr gets parsed.
+        self.dismiss(animated: true) { [weak self] in
+            guard let qrString = self?.qROutput else {
+                return
+            }
+            self?.delegate?.didGet(qrData: qrString)
+        }
+    }
+    
+    @objc private func toggleSession() {
+        guard let session = captureSession else {
+            return
+        }
+        if session.isRunning {
+            session.stopRunning()
+        } else {
+            session.startRunning()
+        }
     }
     
     private func setup() {
