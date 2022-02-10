@@ -57,6 +57,14 @@ public final class QRCapturerViewController: UIViewController {
     
     public weak var delegate: QRDataSource?
     public weak var eventLoger: QREventLogger?
+    
+    private var windowInterfaceOrientation: UIInterfaceOrientation? {
+        if #available(iOS 13.0, *) {
+            return UIApplication.shared.windows.first?.windowScene?.interfaceOrientation
+        } else {
+            return UIApplication.shared.statusBarOrientation
+        }
+    }
 
     // MARK: UI Components
     
@@ -156,8 +164,8 @@ public final class QRCapturerViewController: UIViewController {
     }
     
     private func updateVideoOrientation() {
-        eventLoger?.qrEventOccurred(event: "Switched video orientation to \(UIDevice.current.orientation).", level: .info)
-        self.videoPreviewLayer?.connection?.videoOrientation = UIDevice.current.orientation.toAVPreviewOrientation
+        eventLoger?.qrEventOccurred(event: "Switched video orientation to \(String(describing: self.windowInterfaceOrientation)).", level: .info)
+        self.videoPreviewLayer?.connection?.videoOrientation = self.windowInterfaceOrientation?.toAVPreviewOrientation ?? .portrait
     }
 
     public func resume() {
@@ -299,10 +307,31 @@ extension UIDeviceOrientation {
         case .portraitUpsideDown:
             return .portraitUpsideDown
         case .landscapeLeft:
-            return .landscapeLeft
-        case .landscapeRight:
             return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
         case .faceUp, .faceDown, .unknown:
+            return .portrait
+        @unknown default:
+            return .portrait
+        }
+    }
+    
+}
+
+extension UIInterfaceOrientation {
+    
+    var toAVPreviewOrientation: AVCaptureVideoOrientation {
+        switch self {
+        case .portrait:
+            return .portrait
+        case .portraitUpsideDown:
+            return .portraitUpsideDown
+        case .landscapeLeft:
+            return .landscapeRight
+        case .landscapeRight:
+            return .landscapeLeft
+        case .unknown:
             return .portrait
         @unknown default:
             return .portrait
