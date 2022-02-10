@@ -16,9 +16,12 @@ import UIKit
 public struct QRScannerView {
     
     var scannedText: Binding<String>
+    var tintColor: UIColor
     
-    public init(scannedText: Binding<String>) {
+    public init(scannedText: Binding<String>,
+                tintColor: UIColor = .systemBlue) {
         self.scannedText = scannedText
+        self.tintColor = tintColor
     }
 }
 
@@ -32,11 +35,14 @@ extension QRScannerView: UIViewControllerRepresentable {
     public func makeUIViewController(context: Context) -> QRCapturerViewController {
         let controller = QRCapturerViewController(shouldDismiss: true)
         controller.delegate = context.coordinator
+        controller.view.tintColor = tintColor
         return controller
     }
     
     public func updateUIViewController(_ uiViewController: QRCapturerViewController, context: Context) {
-        
+        if tintColor != uiViewController.view.tintColor {
+            uiViewController.view.tintColor = tintColor
+        }
     }
     
     public typealias UIViewControllerType = QRCapturerViewController
