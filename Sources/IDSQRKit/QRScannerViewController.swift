@@ -75,6 +75,9 @@ public final class QRCapturerViewController: UIViewController {
             layer.frame = previewView.layer.bounds
             previewView.layer.addSublayer(layer)
         }
+        
+        guard let windowInterfaceOrientation = self.windowInterfaceOrientation else { return }
+        updateVideoOrientation(using: windowInterfaceOrientation)
     }
     
     public override func loadView() {
@@ -157,15 +160,9 @@ public final class QRCapturerViewController: UIViewController {
         eventLoger?.qrEventOccurred(event: "Stopped capture session.", level: .info)
     }
     
-    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
-        super.viewWillTransition(to: size, with: coordinator)
-        
-        updateVideoOrientation()
-    }
-    
-    private func updateVideoOrientation() {
-        eventLoger?.qrEventOccurred(event: "Switched video orientation to \(String(describing: self.windowInterfaceOrientation)).", level: .info)
-        self.videoPreviewLayer?.connection?.videoOrientation = self.windowInterfaceOrientation?.toAVPreviewOrientation ?? .portrait
+    private func updateVideoOrientation(using orientation: UIInterfaceOrientation) {
+        eventLoger?.qrEventOccurred(event: "Switched video orientation to \(orientation)).", level: .info)
+        self.videoPreviewLayer?.connection?.videoOrientation = orientation.toAVPreviewOrientation
     }
 
     public func resume() {
@@ -221,7 +218,7 @@ public final class QRCapturerViewController: UIViewController {
         if let session = captureSession {
             videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
             videoPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-            updateVideoOrientation()
+            updateVideoOrientation(using: windowInterfaceOrientation ?? .portrait)
         }
     }
     
@@ -307,9 +304,9 @@ extension UIDeviceOrientation {
         case .portraitUpsideDown:
             return .portraitUpsideDown
         case .landscapeLeft:
-            return .landscapeRight
-        case .landscapeRight:
             return .landscapeLeft
+        case .landscapeRight:
+            return .landscapeRight
         case .faceUp, .faceDown, .unknown:
             return .portrait
         @unknown default:
@@ -328,9 +325,9 @@ extension UIInterfaceOrientation {
         case .portraitUpsideDown:
             return .portraitUpsideDown
         case .landscapeLeft:
-            return .landscapeRight
-        case .landscapeRight:
             return .landscapeLeft
+        case .landscapeRight:
+            return .landscapeRight
         case .unknown:
             return .portrait
         @unknown default:
