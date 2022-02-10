@@ -148,6 +148,17 @@ public final class QRCapturerViewController: UIViewController {
         self.captureSession?.stopRunning()
         eventLoger?.qrEventOccurred(event: "Stopped capture session.", level: .info)
     }
+    
+    public override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        updateVideoOrientation()
+    }
+    
+    private func updateVideoOrientation() {
+        eventLoger?.qrEventOccurred(event: "Switched video orientation to \(UIDevice.current.orientation).", level: .info)
+        self.videoPreviewLayer?.connection?.videoOrientation = UIDevice.current.orientation.toAVPreviewOrientation
+    }
 
     public func resume() {
         captureSession?.startRunning()
@@ -202,6 +213,7 @@ public final class QRCapturerViewController: UIViewController {
         if let session = captureSession {
             videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
             videoPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
+            updateVideoOrientation()
         }
     }
     
@@ -277,4 +289,26 @@ extension UIViewController {
     }
     
 }
+
+extension UIDeviceOrientation {
+    
+    var toAVPreviewOrientation: AVCaptureVideoOrientation {
+        switch self {
+        case .portrait:
+            return .portrait
+        case .portraitUpsideDown:
+            return .portraitUpsideDown
+        case .landscapeLeft:
+            return .landscapeLeft
+        case .landscapeRight:
+            return .landscapeRight
+        case .faceUp, .faceDown, .unknown:
+            return .portrait
+        @unknown default:
+            return .portrait
+        }
+    }
+    
+}
+
 #endif
