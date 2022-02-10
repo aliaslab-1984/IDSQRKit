@@ -71,10 +71,7 @@ public final class QRCapturerViewController: UIViewController {
     public override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         
-        if let layer = videoPreviewLayer {
-            layer.frame = previewView.layer.bounds
-            previewView.layer.addSublayer(layer)
-        }
+        videoPreviewLayer?.frame = previewView.layer.bounds
         
         guard let windowInterfaceOrientation = self.windowInterfaceOrientation else { return }
         updateVideoOrientation(using: windowInterfaceOrientation)
@@ -201,25 +198,27 @@ public final class QRCapturerViewController: UIViewController {
         guard let input = try? AVCaptureDeviceInput(device: captureDevice) else {return}
          
         // Initialize the captureSession object.
-        captureSession = AVCaptureSession()
+        let session = AVCaptureSession()
+        captureSession = session
         // Set the input device on the capture session.
-        captureSession?.addInput(input as AVCaptureInput)
+        session.addInput(input as AVCaptureInput)
         
         let captureMetadataOutput = AVCaptureMetadataOutput()
-        captureSession?.addOutput(captureMetadataOutput)
+        session.addOutput(captureMetadataOutput)
         captureMetadataOutput.setMetadataObjectsDelegate(self, queue: .main)
         captureMetadataOutput.metadataObjectTypes = [AVMetadataObject.ObjectType.qr]
         
-        initializePreviewLayer()
+        initializePreviewLayer(with: session)
     }
     
-    private func initializePreviewLayer() {
+    private func initializePreviewLayer(with session: AVCaptureSession) {
         // Initialize the video preview layer and add it as a sublayer to the viewPreview view's layer.
-        if let session = captureSession {
-            videoPreviewLayer = AVCaptureVideoPreviewLayer(session: session)
-            videoPreviewLayer?.videoGravity = AVLayerVideoGravity.resizeAspectFill
-            updateVideoOrientation(using: windowInterfaceOrientation ?? .portrait)
-        }
+        let videoLayer = AVCaptureVideoPreviewLayer(session: session)
+        videoPreviewLayer = videoLayer
+        videoLayer.videoGravity = AVLayerVideoGravity.resizeAspectFill
+        videoLayer.frame = previewView.bounds
+        previewView.layer.addSublayer(videoLayer)
+        updateVideoOrientation(using: windowInterfaceOrientation ?? .portrait)
     }
     
     private func setupGreenBox() {
