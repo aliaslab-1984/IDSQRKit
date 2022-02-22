@@ -2,7 +2,7 @@
 
 "alert_title" = "Accesso alla fotocamera";
 "alert_message" ="Per poter scansionare il codice QR è necessario fornire l'accesso alla fotocamera.";
-"give_access_action" = "Dai Accesso";
+"give_access_action" = "Successivo";
 "cancel_alert" = "Annulla";
 "setting_alert_title" = "Accesso alla fotocamera negato";
 "setting_alert_message" = "Per dare accesso alla fotocamera è necessario abilitarlo dalle impostazioni del dispositivo.";
