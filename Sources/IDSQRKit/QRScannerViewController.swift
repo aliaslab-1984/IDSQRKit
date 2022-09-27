@@ -153,8 +153,10 @@ public final class QRCapturerViewController: UIViewController {
     
     public override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        self.captureSession?.stopRunning()
-        eventLoger?.qrEventOccurred(event: "Stopped capture session.", level: .info)
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.captureSession?.stopRunning()
+            self?.eventLoger?.qrEventOccurred(event: "Stopped capture session.", level: .info)
+        }
     }
     
     private func updateVideoOrientation(using orientation: UIInterfaceOrientation) {
@@ -163,9 +165,11 @@ public final class QRCapturerViewController: UIViewController {
     }
 
     public func resume() {
-        captureSession?.startRunning()
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            self?.captureSession?.startRunning()
+            self?.eventLoger?.qrEventOccurred(event: "Resuming capture session.", level: .info)
+        }
         qrCodeFrameView?.frame = .zero
-        eventLoger?.qrEventOccurred(event: "Resuming capture session.", level: .info)
     }
     
     @objc private func close() {
@@ -236,9 +240,11 @@ public final class QRCapturerViewController: UIViewController {
     
     public override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        // Start video capture.
-        captureSession?.startRunning()
-        eventLoger?.qrEventOccurred(event: "Starting capture session.", level: .info)
+        DispatchQueue.global(qos: .userInitiated).async { [weak self] in
+            // Start video capture.
+            self?.captureSession?.startRunning()
+            self?.eventLoger?.qrEventOccurred(event: "Starting capture session.", level: .info)
+        }
     }
 }
 
